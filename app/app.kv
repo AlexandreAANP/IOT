@@ -1,0 +1,46 @@
+<myRoot>:
+    orientation: 'vertical'
+    socket1: socket1
+    socket2: socket2
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            text: "Socket 1"
+            font_size: 16
+            color: 1,1,1
+        Label:
+            id: socket1
+            text: "status: Ligado"
+            font_size: 16
+            color: 1,1,1
+        Button:
+            text: "Ligar"
+            font_size: 16
+            size: 100,50
+            on_press: root.ligarSocket1()
+        Button:
+            text: "Desligar"
+            font_size: 16
+            size: 100,50
+            on_press: root.desligarSocket1()
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            text: "Socket 2"
+            font_size: 16
+            color: 1,1,1
+        Label:
+            id: socket2
+            text: "status: Ligado"
+            font_size: 16
+            color: 1,1,1
+        Button:
+            text: "Ligar"
+            font_size: 16
+            size: 100,50
+            on_press: root.ligarSocket2()
+        Button:
+            text: "Desligar"
+            font_size: 16
+            size: 100,50
+            on_press: root.desligarSocket2() 

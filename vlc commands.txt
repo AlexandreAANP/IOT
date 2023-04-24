@@ -1,0 +1,5 @@
+vlc --loop sftp://sftp_user@127.0.0.1/sftp_user/test.mp4
+
+vlc --loop --fullscreen sftp://sftp_user@127.0.0.1/sftp_user/test.mp4 :vout-filter=transform --transform-type=90 --video-filter "transform{true}"
+
+vlc --loop --fullscreen sftp://sftp_user@127.0.0.1/sftp_user/test.mp4 :vout-filter=transform --transform-type=90 --video-filter "transform{true}" --no-autoscale

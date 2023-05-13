@@ -1,5 +1,9 @@
 version: "2"
 services:
+  api:
+    build: ./api_v1
+    ports: 
+        - "2224:5000"
   sftp:
     build: ./sftp/
     volumes:

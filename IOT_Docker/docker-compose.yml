@@ -1,0 +1,18 @@
+version: "2"
+services:
+  sftp:
+    build: ./sftp/
+    volumes:
+        - ./videos:/home/ORV/videos
+    ports:
+        - "2223:22"
+    command:
+        - ORV:password:1001
+    depends_on:
+        - "mosquitto-mqtt"
+  mosquitto-mqtt:
+    image: eclipse-mosquitto:latest 
+    volumes:
+        - ./mosquittoMqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+        - "2222:1883"

@@ -4,31 +4,48 @@ import datetime
 import json
 class MQTTClient():
     instance = None
-    def __init__(self, hostname, port) -> None:
+    def __init__(self, hostname, port, subscribeList) -> None:
         self.client = mqtt.Client()
+        self.subscribeList = subscribeList
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.connect(hostname, port, 60)
         self.lastMsgByTopic = {}
+        
 
     @classmethod
-    def getMQTTClient(cls,hostname="localhost", port=1883):
+    def getMQTTClient(cls,subscribeList:list = [], hostname="localhost", port=1883 ):
         if cls.instance == None:
-            cls.instance = cls(hostname,port)
+            cls.instance = cls(hostname,port,tuple(subscribeList))
         return cls.instance
     
     def subscribe(self,topic):
+        if topic in self.subscribeList:
+            print(topic+" already subscribed")
+            return
         try:
             self.client.subscribe(topic)
+            l = list(self.subscribeList)
+            l.append(topic)
+            self.subscribeList = tuple(l)
             print("subscribed to: "+topic)
         except:
             print("erro in function self.client.subscribe("+topic+")")
             return False
         return True
     
+    def isSubscribe(self, topic):
+        return topic in self.subscribeList
+
     def unsubscribe(self,topic):
+        if not topic in self.subscribeList:
+            print(topic+" already unsubscribed")
+            return
         try:
             self.client.unsubscribe(topic)
+            l = list(self.subscribeList)
+            l.remove(topic)
+            self.subscribeList = tuple(l)
             print("unsubscribed to: "+topic)
         except:
             print("erro in function self.client.unsubscribe("+topic+")")
@@ -39,8 +56,8 @@ class MQTTClient():
         print("Connected with result code "+str(rc))
 
         #subscribe all topics
-        client.subscribe("/raspberry2/")
-        client.subscribe("/raspberry1/")
+        for i in self.subscribeList:
+            client.subscribe(str(i))
 
     def on_message(self,client, userdata, msg):
         content = None

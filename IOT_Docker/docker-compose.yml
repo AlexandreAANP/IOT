@@ -2,6 +2,8 @@ version: "2"
 services:
   api:
     build: ./api_v1
+    volumes:
+        - C:\Users\alexa\Dvideos:/videos
     ports: 
         - "2224:5000"
     depends_on:
@@ -21,3 +23,5 @@ services:
     ports:
         - "2222:1883"
         - "2225:9006"
+volumes:
+  videos:

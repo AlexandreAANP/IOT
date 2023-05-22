@@ -81,6 +81,9 @@ class MQTTClient():
     def getClient(self):
         return self.client
     
+    def getSubscribedList(self):
+        return list(self.subscribeList)
+
     def getLastMsg(self):
         return self.lastMsgByTopic.copy()
     

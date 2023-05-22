@@ -1,0 +1,10 @@
+sudo raspi-config
+  interfacing options
+sudo adduser <username> -> define user
+passwd <username> -> define password
+
+in /home/<username> change permissions
+  chmod 557 /home/<username>
+  
+  
+This user will be access by raspberry pi monitor

@@ -7,9 +7,24 @@ import signal
 import os
 from mqttController import MQTTClient
 
-ALLOWED_EXTENSIONS = ['mp4']
-VIDEOS_PATH = "../videos"
-ListenerMQTT = MQTTClient.getMQTTClient(hostname="iot_docker-mosquitto-mqtt-1", port=1883, subscribeList=["raspberrypi1", "raspberrypi2"])
+dev = {
+    "hostname" : "localhost",
+    "port" : 2222,
+    "ALLOWED_EXTENSIONS" : ['mp4','jpg','png'],
+    "VIDEOS_PATH" : "../videos"
+}
+prod = {
+    "hostname" : "iot_docker-mosquitto-mqtt-1",
+    "port" : 1883,
+    "ALLOWED_EXTENSIONS" : ['mp4'],
+    "VIDEOS_PATH" : "../videos"
+}
+
+ALLOWED_EXTENSIONS = dev["ALLOWED_EXTENSIONS"]
+VIDEOS_PATH = dev["VIDEOS_PATH"]
+
+
+ListenerMQTT = MQTTClient.getMQTTClient(hostname=dev["hostname"], port=dev["port"], subscribeList=["raspberrypi1", "raspberrypi2"])
 t1 = threading.Thread(target=ListenerMQTT.getClient().loop_start)
 
 
@@ -38,10 +53,12 @@ def setRaspBerryPiVideo():
      #if there are parameters variables videoName and topic
      if(videoName and topic):
         #if there is not a '.' and if the filename is not in the videos folder
-        if('.'in videoName and not videoName in os.listdir(VIDEOS_PATH)):
+        if(not '.' in videoName or not videoName in os.listdir(VIDEOS_PATH)):
             return f'videoName not found in videos folder {videoName}', 404
         if(not topic in MQTTClient.getMQTTClient().getSubscribedList()):
             return f'API MQTT Client is not subscribe to '+topic, 404
+        MQTTClient.getMQTTClient().setVideoToRasberryPi(videoName,topic)
+        print(MQTTClient.getMQTTClient().getLastMsgByTopic(topic))
         return f'OK'
      return "missing url parameters, you should use 'videoName' and 'topic parameters'",500
 

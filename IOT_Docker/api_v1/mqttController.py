@@ -55,6 +55,8 @@ class MQTTClient():
     def on_connect(self,client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
 
+        #self.client.publish(topic="raspberrypi1", payload=str("olalpo"), qos=0)
+
         #subscribe all topics
         for i in self.subscribeList:
             client.subscribe(str(i))
@@ -64,7 +66,8 @@ class MQTTClient():
         try:
             #try convert json_str to python_dict 
             content = json.loads(str(msg.payload.decode()))
-        except:
+        except Exception as e:
+            print("Exception "+e)
             #if fail convertion write log file
             with open("error.log", "+a") as f:
                 f.write("\n\n"+str(datetime.datetime.now())+" Error msg wrong format\nMSG: ->"+str(msg.payload.decode()))
@@ -94,4 +97,15 @@ class MQTTClient():
             print("Topic doesn't have any message\nTopic: "+topic)
             return False
         return True
-
+    
+    def setVideoToRasberryPi(self, video, raspberryPi):
+        payload= {
+            "action" : "setVideo",
+            "id" : "api",
+            "video" : video
+        }
+        try:
+            self.client.publish(topic=raspberryPi, payload=json.dumps(payload), qos=0)
+            
+        except:
+            print( "ERROR")

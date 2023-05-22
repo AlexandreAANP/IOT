@@ -9,8 +9,6 @@
 #### Methods = GET 
 #### URL = /setVideo?videoName=<nome-do-video>&topic=<mqtt-topic>
 #### Action:
-    Ainda não acabado!
-
     Define qual video o raspberry pi vai correr
     enviando uma mqtt message para o topic referido
     

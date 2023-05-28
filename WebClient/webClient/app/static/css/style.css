@@ -4,16 +4,22 @@ body{
   background-size: cover;
   font-family: 'Courier New', Courier, monospace;
   color: white;
+  justify-content: center; /* Horizontally center */
+  align-items: center;
+  display: flex;
 }
 .container {
   background-color: rgb(154 8 55);
   width: 503px;
+  
   margin-left: auto;
   margin-right: auto;
   text-align: center;
   border: 2px solid rgb(255, 255, 255);
   border-radius: 10px;
   align-items: center;
+  justify-content: center;
+  
 }
 
 /* static/css/style.css */

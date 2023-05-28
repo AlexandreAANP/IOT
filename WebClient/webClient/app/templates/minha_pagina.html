@@ -1,0 +1,37 @@
+{% load static %}
+
+<html>
+<head>
+    <title>Minha Página</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Select the raspberry</h1>
+        <form method="GET" action="">
+            <select name="selecao">
+                <option value="" {% if not selecao %}selected{% endif %}>Selecione uma opção</option>
+                {% for opcao in opcoes_raspberry %}
+                    <option value="{{ opcao }}" {% if selecao == opcao %}selected{% endif %}>{{ opcao }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            {% if selecao %}
+                <select>
+                    <option value="">Selecione uma opção</option>
+                    {% for valor in valores_dropdown2 %}
+                        <option value="{{ valor }}">{{ valor }}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+            <br><br>
+            <input type="submit" value="Enviar">
+        </form>
+        <div class="image-container">
+            <img src="{% static 'img/raspberry.jpg' %}" alt="raspberry">
+        </div>
+    </div>
+    
+    
+</body>
+</html>

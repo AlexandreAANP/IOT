@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload de Vídeo</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+		background: radial-gradient(circle at center, #f08a8a 10%, #f79898 50%, #9e3535 90%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      max-width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="file"] {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="submit"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <form action="http://192.168.1.179:2224/uploadvideo" method="POST" enctype="multipart/form-data">
+    <h2 style="text-align: center;">Upload de Vídeo</h2>
+    <input type="file" name="video" accept="video/*" required>
+    <br>
+    <input type="submit" value="Enviar">
+  </form>
+</body>
+</html>

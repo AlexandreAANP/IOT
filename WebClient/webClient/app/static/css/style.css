@@ -1,0 +1,48 @@
+/* Estilo para o primeiro dropdown */
+body{
+  background: radial-gradient(circle at top, #f08a8a 10%, #f79898 50%, #9e3535 90%);
+  background-size: cover;
+  font-family: 'Courier New', Courier, monospace;
+  color: white;
+  justify-content: center; /* Horizontally center */
+  align-items: center;
+  display: flex;
+}
+.container {
+  background-color: rgb(154 8 55);
+  width: 503px;
+  
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+/* static/css/style.css */
+
+.image-container img {
+  width: 500px; /* Ajuste a largura conforme necessário */
+  height: auto; /* Manter a proporção original */
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 10px;
+}
+
+
+select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  
+  /* Estilo para o segundo dropdown */
+  select[name="segundo-dropdown"] {
+    margin-top: 10px;
+  }
+  

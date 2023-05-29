@@ -20,5 +20,5 @@ from app.views import minha_pagina
 
 urlpatterns = [
     # ... outras URLs ...
-    path('minha-pagina/', minha_pagina, name='minha_pagina'),
+    path('', minha_pagina, name='minha_pagina'),
 ]

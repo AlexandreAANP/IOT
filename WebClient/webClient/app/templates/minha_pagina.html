@@ -8,22 +8,21 @@
 <body>
     <div class="container">
         <h1>Select the raspberry</h1>
-        <form method="GET" action="">
-            <select name="selecao">
+        <form method="POST" action="">
+            <select id="selectRaspberryPi" name="selecao" required>
                 <option value="" {% if not selecao %}selected{% endif %}>Selecione uma opção</option>
                 {% for opcao in opcoes_raspberry %}
                     <option value="{{ opcao }}" {% if selecao == opcao %}selected{% endif %}>{{ opcao }}</option>
                 {% endfor %}
             </select>
             <br><br>
-            {% if selecao %}
-                <select>
-                    <option value="">Selecione uma opção</option>
-                    {% for valor in valores_dropdown2 %}
-                        <option value="{{ valor }}">{{ valor }}</option>
-                    {% endfor %}
+                <select required>
+                    <option id="videoSelected">Selecione um opção</option>
+                    {% for video in opcoes_videos%}
+                    <option>{{video}}</option>
+                    
+                    {%endfor%}
                 </select>
-            {% endif %}
             <br><br>
             <input type="submit" value="Enviar">
         </form>
@@ -32,6 +31,38 @@
         </div>
     </div>
     
-    
+    <script src="{% static 'jquery/jquery-3.7.0.min.js'%}"></script>
+    <script>
+        console.log($.get("http://localhost:5000/getVideo"));
+        function onsuccess(content){
+            console.log(content.video)
+            $("#videoSelected").val("")
+            $("#videoSelected").html("Selecione uma opção")
+            if(content.video==""){
+                return;
+            }
+            $("#videoSelected").val(content.video)
+            $("#videoSelected").html(content.video)
+            $("#videoSelected").show()
+            $("#videoSelected").attr("selected",true)
+        }
+
+        $("#selectRaspberryPi").on("change", function(){
+            console.log(this.value)
+            if(this.value != ""){
+                //console.log($.get("http://localhost:5000/getVideo/"+this.value))
+                $.ajax({
+                    "method": "GET",
+                    "url" : "http://localhost:5000/getVideo/"+this.value,
+                    "success" : onsuccess
+                })
+                //var json1 = $.get("http://localhost:5000/getVideo/"+this.value)
+                //console.log(json1)
+                //console.log(json1.responseJSON)
+            }
+        })
+    </script>
+
+
 </body>
 </html>

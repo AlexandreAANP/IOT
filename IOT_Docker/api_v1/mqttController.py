@@ -67,7 +67,7 @@ class MQTTClient():
             #try convert json_str to python_dict 
             content = json.loads(str(msg.payload.decode()))
         except Exception as e:
-            print("Exception "+e)
+            print("Exception "+str(e))
             #if fail convertion write log file
             with open("error.log", "+a") as f:
                 f.write("\n\n"+str(datetime.datetime.now())+" Error msg wrong format\nMSG: ->"+str(msg.payload.decode()))
@@ -92,11 +92,10 @@ class MQTTClient():
     
     def getLastMsgByTopic(self,topic):
         try:
-            self.lastMsgByTopic[topic].copy()
+            return self.lastMsgByTopic[topic].copy()
         except:
             print("Topic doesn't have any message\nTopic: "+topic)
             return False
-        return True
     
     def setVideoToRasberryPi(self, video, raspberryPi):
         payload= {

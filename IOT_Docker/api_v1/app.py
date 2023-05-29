@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 #from flask_crontab import Crontab
 import requests
 import threading
@@ -24,13 +25,14 @@ ALLOWED_EXTENSIONS = dev["ALLOWED_EXTENSIONS"]
 VIDEOS_PATH = dev["VIDEOS_PATH"]
 
 
-ListenerMQTT = MQTTClient.getMQTTClient(hostname=dev["hostname"], port=dev["port"], subscribeList=["raspberrypi1", "raspberrypi2"])
+ListenerMQTT = MQTTClient.getMQTTClient(hostname=dev["hostname"], port=dev["port"], subscribeList=["raspberrypi1", "raspberrypi2", "raspberrypi3"])
 t1 = threading.Thread(target=ListenerMQTT.getClient().loop_start)
 
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = VIDEOS_PATH
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 #function to terminated when ctrl + c is pressed
@@ -75,6 +77,14 @@ def uploadVideo():
                 return "Uploaded", 200
     return "Invalid Format File", 500
 
+@app.route("/getVideo", methods = ["GET"])
+def getVideo():
+    return jsonify(os.listdir(VIDEOS_PATH))
+
+@app.route("/getVideo/<string:raspberrypi>")
+def getVideoByRaspberryPi(raspberrypi):
+    print(MQTTClient.getMQTTClient().getLastMsgByTopic(raspberrypi))
+    return jsonify(MQTTClient.getMQTTClient().getLastMsgByTopic(raspberrypi))
  
 # main driver function
 if __name__ == '__main__':

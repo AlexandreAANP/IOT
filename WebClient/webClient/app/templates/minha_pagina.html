@@ -29,6 +29,12 @@
         <div class="image-container">
             <img src="{% static 'img/raspberry.jpg' %}" alt="raspberry">
         </div>
+        <h2 style="text-align: center;">Upload de Videos</h2>
+      <form action="http://192.168.1.179:5000/uploadvideo" method="post" enctype="multipart/form-data">
+        <input type="file" name="video" accept="video/*" required>
+        <br>
+        <input type="submit" value="Enviar">
+      </form>
     </div>
     
     <script src="{% static 'jquery/jquery-3.7.0.min.js'%}"></script>

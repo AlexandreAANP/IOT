@@ -1,0 +1,6 @@
+requests
+tkinter
+Pillow
+screeninfo
+psutil
+paramiko

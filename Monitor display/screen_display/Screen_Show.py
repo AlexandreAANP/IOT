@@ -27,6 +27,11 @@ SECOND_TRANSITION = 30
 root = tk.Tk()
 root.title("Weather Display")
 
+SFTP_HOST = "192.168.1.128"
+SFTP_USER = "ORV"
+SFTP_PASSWORD = "password"
+SFTP_PORT = 2223
+
 # Function to fetch weather data from the API
 def fetch_weather():
     try:
@@ -61,7 +66,7 @@ def fetch_random_image():
 # Function to switch to video display
 def switch_to_video():
     #rotate_screen(90)  # Reset screen rotation before playing the video
-    play_video_from_sftp('ad', '127.0.0.1', select_random_video(), 'ad') #change the video path
+    play_video_from_sftp(SFTP_USER, SFTP_HOST, select_random_video(), SFTP_PORT,SFTP_PASSWORD) #change the video path
     open_website()
     #rotate_screen(90)  # Reset the screen rotation after playing the video
 
@@ -87,19 +92,19 @@ def rotate_screen(degrees):
         print(f"Screen rotation not supported on {system}.")
 
 # Function to play video from SFTP server using VLC
-def play_video_from_sftp(sftp_user, sftp_host, video_path, password):
-    vlc_command = f'vlc --fullscreen sftp://{sftp_user}@{sftp_host}/{video_path} :vout-filter=transform --video-filter --no-autoscale vlc://quit'
+def play_video_from_sftp(sftp_user, sftp_host, video_path, sftp_port, password):
+    vlc_command = f'vlc --fullscreen sftp://{sftp_user}:{sftp_port}@{sftp_host}/{video_path} :vout-filter=transform --video-filter --no-autoscale vlc://quit'
     #sudo apt-get install sshpass
     subprocess.run(vlc_command, shell=True)
 
 def select_random_video():
 
     # SFTP connection details
-    hostname = '127.0.0.1'
-    port = 22
-    username = 'ad'
-    password = 'ad'
-    remote_folder = '/home/ad/video/'
+    hostname = SFTP_HOST
+    port = 2223
+    username = SFTP_USER
+    password = SFTP_PASSWORD
+    remote_folder = '/home/'+SFTP_USER+'/video/'
 
     # Establish an SFTP connection
     ssh = paramiko.SSHClient()

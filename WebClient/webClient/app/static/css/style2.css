@@ -1,0 +1,26 @@
+/* Estilo para o primeiro dropdown */
+    body {
+      font-family: Arial, sans-serif;
+      font-family: 'Courier New', Courier, monospace;
+      color: white;
+      margin: 0;
+      padding: 20px;
+		background: radial-gradient(circle at center, #f08a8a 10%, #f79898 50%, #9e3535 90%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+/* Estilo para o primeiro dropdown */
+body {
+  font-family: Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
+  color: white;
+  margin: 0;
+  padding: 20px;
+background: radial-gradient(circle at center, #f08a8a 10%, #f79898 50%, #9e3535 90%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}

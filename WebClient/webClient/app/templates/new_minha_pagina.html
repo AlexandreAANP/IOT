@@ -1,0 +1,222 @@
+{% load static %}
+<html>
+<head>
+    <title>Minha Página</title>
+    <link href="{% static 'bootstrap/dist/css/bootstrap.min.css'%}" rel="stylesheet" type="text/css">
+    <script src="{% static 'bootstrap\dist\js\bootstrap.bundle.min.js'%}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style2.css' %}">
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-5" style="background-color: rgb(154 8 55); border: 2px solid rgb(255, 255, 255);">
+                <h1 align="center">Change Configuration</h1>
+                <div class="row ">
+                    <div class="col-1"></div>
+                    <form class="form-group col bg-light p-3 rounded">
+                        <label class="text-dark">Select RaspberryPi</label>
+                        <select class="form-control" id="selectRaspberryPi" name="selecao" required>
+                            <option value="" {% if not selecao %}selected{% endif %}>Select an option</option>
+                            {% for opcao in opcoes_raspberry %}
+                                <option value="{{ opcao }}" {% if selecao == opcao %}selected{% endif %}>{{ opcao }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <label class="text-dark">Choose Video</label>
+                        <select class="form-control" required>
+                            <option id="videoSelected">Select an option</option>
+                            {% for video in opcoes_videos%}
+                            <option>{{video}}</option>
+                            
+                            {%endfor%}
+                        </select>
+                        <br>
+                        <input class="btn btn-success col-12" type="submit" value="Send">
+                    </form>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row">
+                    <div>
+                        <img class="img-thumbnail"  src="{% static 'img/raspberry.jpg' %}" alt="raspberry">
+                    </div>
+                </div>
+                <br>
+                
+            </div>
+            <div class="col-5" style="background-color: rgb(154 8 55); border: 2px solid rgb(255, 255, 255);">
+                <h1 align="center">RaspberryPi Status</h1>
+                
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col p-3 bg-light rounded">
+                    <label class="text-dark">Select RaspberryPi</label>
+                    <select class="form-control" id="selectRaspberryPiStatus" name="selecao" required>
+                        <option value="" {% if not selecao %}selected{% endif %}>Select an option</option>
+                        {% for opcao in opcoes_raspberry %}
+                            <option value="{{ opcao }}" {% if selecao == opcao %}selected{% endif %}>{{ opcao }}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col ">
+                        <table id="statusTable" class="table p-3" style="display:none;">
+                            <tr>
+                                <th>Operational</th>
+                                <td>
+                                    <div id="spinnerOperationalStatus" class="spinner-grow spinner-grow-sm text-success" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </td> 
+                             </tr>
+                            <tr>
+                               <th>Name</th>
+                               <td>RaspberryPi 1</td> 
+                            </tr>
+                            <tr>
+                                <th>Video</th>
+                                <td>test.mp4</td> 
+                             </tr>
+                             <tr>
+                                <th>Temperature</th>
+                                <td>13 ºC</td>
+                             </tr>
+                        </table>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <form class="form-group col bg-light p-3 rounded">
+                        <label class="text-dark">Upload Video</label>
+                        <input class="form-control" type="file" name="video" accept="video/*" required>
+                        <br>
+                        <input class="btn btn-success col-12" type="submit" value="Send">
+                    </form>
+                    <div class="col-1"></div>
+                </div>
+            </div>
+            <div class="col"></div>
+            
+        </div>
+        
+    </div>
+
+
+
+
+
+    <!--div class="">
+        <h1>Change Configuration</h1>
+        <form method="POST" action="">
+            <select id="selectRaspberryPi" name="selecao" required>
+                <option value="" {% if not selecao %}selected{% endif %}>Select an option</option>
+                {% for opcao in opcoes_raspberry %}
+                    <option value="{{ opcao }}" {% if selecao == opcao %}selected{% endif %}>{{ opcao }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+                <select required>
+                    <option id="videoSelected">Select an option</option>
+                    {% for video in opcoes_videos%}
+                    <option>{{video}}</option>
+                    
+                    {%endfor%}
+                </select>
+            <br><br>
+            <input type="submit" value="Send">
+        </form>
+        <div class="image-container">
+            <img src="{% static 'img/raspberry.jpg' %}" alt="raspberry">
+        </div>
+        <h2 style="text-align: center;">Upload de Videos</h2>
+      <form action="http://192.168.1.179:5000/uploadvideo" method="post" enctype="multipart/form-data">
+        <input class="form-control" type="file" name="video" accept="video/*" required>
+        <br>
+        <input type="submit" value="Send">
+      </form>
+    </div-->
+
+
+
+    
+    
+    <script src="{% static 'jquery/jquery-3.7.0.min.js'%}"></script>
+    <script>
+        const API_HOST = "{{API_HOST}}"
+        const API_PORT = "{{API_PORT}}"
+        var MQ_HOST 
+        var MQ_PORT
+        $(document).ready(function () {
+            $.ajax(
+            {
+                method: "GET",
+                url: "http://"+API_HOST+":"+API_PORT+"/getMQHost",
+                success: function (content) {
+                    MQ_HOST = content.MQ_HOST
+                    MQ_PORT = content.MQ_PORT 
+                }
+            }
+        )
+        })
+        
+    </script>
+    <script>
+        //Status
+        function changeOperationalStatus(value){
+            if(!typeof(value)=='boolean') return;
+            if(value){
+                $("#spinnerOperationalStatus").removeClass("text-danger")
+                $("#spinnerOperationalStatus").addClass("text-success")
+            }
+            else{
+                $("#spinnerOperationalStatus").removeClass("text-success")
+                $("#spinnerOperationalStatus").addClass("text-danger")
+            }
+        }
+
+        function OnChangeRBP(e) {
+            if(this.value == ""){
+                $("#statusTable").hide(1000)
+                return
+            }
+            $("#statusTable").show(1000)
+            console.log(this.value)
+            console.log(API_HOST)
+        }
+        $("#selectRaspberryPiStatus").on("change", OnChangeRBP)
+    </script>
+    <script>
+        //Configuration
+        function onsuccess(content){
+            $("#videoSelected").val("")
+            $("#videoSelected").html("Selecione uma opção")
+            if(content.video==""){
+                return;
+            }
+            $("#videoSelected").val(content.video)
+            $("#videoSelected").html(content.video)
+            $("#videoSelected").show()
+            $("#videoSelected").attr("selected",true)
+        }
+
+        $("#selectRaspberryPi").on("change", function(){
+            console.log(this.value)
+            if(this.value != ""){
+                $.ajax({
+                    "method": "GET",
+                    "url" : "http://"+API_HOST+":"+API_PORT+"/getVideo/"+this.value,
+                    "success" : onsuccess
+                })
+            }
+        })
+    </script>
+
+    <script src="{% static 'bootstrap\dist\js\bootstrap.min.js'%}"></script>
+</body>
+</html>

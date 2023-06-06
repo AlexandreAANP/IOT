@@ -3,39 +3,45 @@
 <html>
 <head>
     <title>Minha Página</title>
+    <link href="{% static 'bootstrap/dist/css/bootstrap.min.css'%}" rel="stylesheet" type="text/css">
+    <script src="{% static 'bootstrap\dist\js\bootstrap.bundle.min.js'%}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="container">
-        <h1>Select the raspberry</h1>
+        <h1>Change Configuration</h1>
         <form method="POST" action="">
             <select id="selectRaspberryPi" name="selecao" required>
-                <option value="" {% if not selecao %}selected{% endif %}>Selecione uma opção</option>
+                <option value="" {% if not selecao %}selected{% endif %}>Select an option</option>
                 {% for opcao in opcoes_raspberry %}
                     <option value="{{ opcao }}" {% if selecao == opcao %}selected{% endif %}>{{ opcao }}</option>
                 {% endfor %}
             </select>
             <br><br>
                 <select required>
-                    <option id="videoSelected">Selecione um opção</option>
+                    <option id="videoSelected">Select an option</option>
                     {% for video in opcoes_videos%}
                     <option>{{video}}</option>
                     
                     {%endfor%}
                 </select>
             <br><br>
-            <input type="submit" value="Enviar">
+            <input type="submit" value="Send">
         </form>
         <div class="image-container">
             <img src="{% static 'img/raspberry.jpg' %}" alt="raspberry">
         </div>
         <h2 style="text-align: center;">Upload de Videos</h2>
       <form action="http://192.168.1.179:5000/uploadvideo" method="post" enctype="multipart/form-data">
-        <input type="file" name="video" accept="video/*" required>
+        <input class="form-control" type="file" name="video" accept="video/*" required>
         <br>
-        <input type="submit" value="Enviar">
+        <input type="submit" value="Send">
       </form>
     </div>
+
+
+
+    
     
     <script src="{% static 'jquery/jquery-3.7.0.min.js'%}"></script>
     <script>
@@ -69,6 +75,6 @@
         })
     </script>
 
-
+    <script src="{% static 'bootstrap\dist\js\bootstrap.min.js'%}"></script>
 </body>
 </html>

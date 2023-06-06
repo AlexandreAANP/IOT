@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
-import sys
 import datetime
 import json
+import os
 class MQTTClient():
     instance = None
     def __init__(self, hostname, port, subscribeList) -> None:
@@ -10,6 +10,12 @@ class MQTTClient():
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.connect(hostname, port, 60)
+        if os.path.exists("LastMsgsCache.json"):
+            with open("LastMsgsCache.json", "r") as f:
+                content = f.read()
+                if len(content) > 2:
+                    self.lastMsgByTopic = json.loads(content)
+                    return
         self.lastMsgByTopic = {}
         
 
@@ -74,12 +80,9 @@ class MQTTClient():
             return
         #update content by topic
         self.lastMsgByTopic[msg.topic] = content
-
-        print( {
-            "topic" : msg.topic,
-            "content" : content
-        })
-        print(self.lastMsgByTopic)
+        with open("LastMsgsCache.json","w") as f:
+            f.write(json.dumps(self.lastMsgByTopic, indent=4))
+            
 
     def getClient(self):
         return self.client
@@ -104,7 +107,6 @@ class MQTTClient():
             "video" : video
         }
         try:
-            self.client.publish(topic=raspberryPi, payload=json.dumps(payload), qos=0)
-            
+            self.client.publish(topic=raspberryPi, payload=json.dumps(payload), qos=0)  
         except:
             print( "ERROR")

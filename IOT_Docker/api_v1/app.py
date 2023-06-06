@@ -70,7 +70,7 @@ def getSubscribedTopic():
 
 @app.route('/uploadvideo', methods=["POST"])
 def uploadVideo():
-    file = request.files['image']
+    file = request.files['video']
     if file:
             if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
@@ -85,10 +85,17 @@ def getVideo():
 def getVideoByRaspberryPi(raspberrypi):
     print(MQTTClient.getMQTTClient().getLastMsgByTopic(raspberrypi))
     return jsonify(MQTTClient.getMQTTClient().getLastMsgByTopic(raspberrypi))
+
+@app.route('/getMQHost', methods=["GET"])
+def getMQHost():
+    return jsonify({
+        "MQ_HOST" : dev["hostname"],
+        "MQ_PORT" : dev["port"]
+    })
  
 # main driver function
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, terminateThread)
     t1.start()
     ListenerMQTT.getClient().loop_stop(force=True)
-    app.run(debug=True)
+    app.run(debug=True, host="localhost")

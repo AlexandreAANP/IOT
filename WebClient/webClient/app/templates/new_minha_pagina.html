@@ -4,6 +4,7 @@
     <title>Minha Página</title>
     <link href="{% static 'bootstrap/dist/css/bootstrap.min.css'%}" rel="stylesheet" type="text/css">
     <script src="{% static 'bootstrap\dist\js\bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'mqttws31.min.js'%}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style2.css' %}">
 </head>
 <body>
@@ -55,7 +56,7 @@
                     <select class="form-control" id="selectRaspberryPiStatus" name="selecao" required>
                         <option value="" {% if not selecao %}selected{% endif %}>Select an option</option>
                         {% for opcao in opcoes_raspberry %}
-                            <option value="{{ opcao }}" {% if selecao == opcao %}selected{% endif %}>{{ opcao }}</option>
+                            <option value="{{ opcao }}">{{ opcao }}</option>
                         {% endfor %}
                     </select>
                     </div>
@@ -76,15 +77,19 @@
                              </tr>
                             <tr>
                                <th>Name</th>
-                               <td>RaspberryPi 1</td> 
+                               <td id="nameStatusField"></td> 
                             </tr>
                             <tr>
                                 <th>Video</th>
-                                <td>test.mp4</td> 
+                                <td id="videoStatusField"></td> 
                              </tr>
                              <tr>
                                 <th>Temperature</th>
-                                <td>13 ºC</td>
+                                <td id="temperatureStatusField"></td>
+                             </tr>
+                             <tr>
+                                <th>Last Update</th>
+                                <td id="lastUpdateStatusField"></td>
                              </tr>
                         </table>
                     </div>
@@ -148,21 +153,153 @@
     
     <script src="{% static 'jquery/jquery-3.7.0.min.js'%}"></script>
     <script>
+        class raspberrypiStatus{
+            constructor(name){
+                this.name = name
+                this.video = ""
+                this.temperature = ""
+                this.lastUpdate = ""
+                this.lastUpdateDate = new Date() 
+                this.lastUpdateDate.setTime(0)
+                this.isOperational = false
+            }
+            checkHealth(difference_time){
+                let dateNow = new Date()
+                console.log(this.name+": "+(dateNow.getTime() - this.lastUpdateDate.getTime()+" == "+difference_time))
+                if(dateNow.getTime() - this.lastUpdateDate.getTime() >= difference_time){
+                    this.isOperational=true;
+                    if($("#selectRaspberryPiStatus").val()==this.name){
+                        changeOperationalStatus(false);
+                    }
+                    
+                }
+                else{
+                    this.isOperational=true;
+                    if($("#selectRaspberryPiStatus").val()==this.name){
+                        changeOperationalStatus(true);
+                    }
+                }
+                   
+            }
+            setValues(content){
+                content = JSON.parse(content)
+                console.log(content)
+                try{
+                    this.temperature = content.temperature
+                    this.video = content.video
+                    this.lastUpdateDate.setTime(Date.parse(content.lastUpdate))
+                    this.lastUpdate = content.lastUpdate
+                    
+                }catch (e){
+                    console.log("message discard: "+e.message)
+                }
+
+            }
+            
+            getName(){
+                return this.name;
+            }
+            getVideo(){
+                return this.video;
+            }
+            getTemperature(){
+                return this.temperature
+            }
+            getLastUpdate(){
+                return this.lastUpdate
+            }
+        }
+    </script>
+    <script>
+        let raspberryList = {}
+        {%for opcao in opcoes_raspberry%}
+            raspberryList["{{opcao}}"] = new raspberrypiStatus("{{opcao}}")
+        {%endfor%}
         const API_HOST = "{{API_HOST}}"
         const API_PORT = "{{API_PORT}}"
         var MQ_HOST 
         var MQ_PORT
+        //time that health check will be execute
+        const FREQUENCY_RATE_MS = 5000 // 5 seconds
+        //difference time of last update and the time at the moment
+        const TIME_DIFFERENCE_BETWEEN_UPDATES = 15000 //15 seconds
+        function checkHealthRaspberryPi(){
+            console.log("5s")
+            Object.keys(raspberryList).forEach((key) => raspberryList[key].checkHealth(TIME_DIFFERENCE_BETWEEN_UPDATES))
+        }
         $(document).ready(function () {
             $.ajax(
             {
                 method: "GET",
-                url: "http://"+API_HOST+":"+API_PORT+"/getMQHost",
+                url: "http://"+API_HOST+":"+API_PORT+"/getMQHost/wb",
                 success: function (content) {
                     MQ_HOST = content.MQ_HOST
                     MQ_PORT = content.MQ_PORT 
+                     //MQ CONNECTION
+
+                    client = new Paho.MQTT.Client(MQ_HOST, Number(MQ_PORT), "webClient");
+
+                    // set callback handlers
+                    client.onConnectionLost = onConnectionLost;
+                    client.onMessageArrived = onMessageArrived;
+
+                    // connect the client
+                    client.connect({onSuccess:onConnect});
+
+
+                    // called when the client connects
+                    function onConnect() {
+                    // Once a connection has been made, make a subscription and send a message.
+                    console.log("Connect to MTTQ");
+                    {%for opcao in opcoes_raspberry %}
+                    client.subscribe("{{opcao}}");
+                    console.log("Subscribed to {{opcao}}");
+                    {%endfor%}
+                    //client.subscribe("/teste/");
+                    //message = new Paho.MQTT.Message("Hello");
+                    //message.destinationName = "World";
+                    //client.send(message);
+                    }
+
+                    // called when the client loses its connection
+                    function onConnectionLost(responseObject) {
+                    if (responseObject.errorCode !== 0) {
+                        console.log("Connection Lost:"+responseObject.errorMessage);
+                    }
+                    }
+
+
+                    // called when a message arrives
+                    function onMessageArrived(message) {
+                        MessageTest = message
+                        console.log("onMessageArrived:"+message.payloadString);
+                        
+                        
+                        if(raspberryList[message._getDestinationName()] != undefined){
+                            raspberryList[message._getDestinationName()].setValues(message.payloadString)
+                        }
+                        if($("#selectRaspberryPiStatus").val() != message._getDestinationName()) return;
+                        try{
+                            let content = JSON.parse(message.payloadString)
+                        changeNameStatus(message._getDestinationName)
+                        changeTemperatureStatus(content.temperature)
+                        changeVideoStatus(content.video)
+                        changeLastUpdate(content.lastUpdate)
+                        }catch (e){
+
+                            console.log("error\n"+e.message)
+                        }
+                        
+                        MessageTest = message
+                    }
+                    checkHealthRaspberryPi()
+                    setInterval(checkHealthRaspberryPi, 5000);
+
                 }
             }
         )
+
+       
         })
         
     </script>
@@ -180,16 +317,36 @@
             }
         }
 
+        function changeNameStatus(value){
+            $("#nameStatusField").html(value)
+        }
+        function changeVideoStatus(value){
+            $("#videoStatusField").html(value)
+        }
+        function changeTemperatureStatus(value){
+            $("#temperatureStatusField").html(value)
+        }
+        function changeLastUpdate(value){
+            $("#lastUpdateStatusField").html(value)
+        }
+
         function OnChangeRBP(e) {
             if(this.value == ""){
                 $("#statusTable").hide(1000)
                 return
             }
+            checkHealthRaspberryPi()
+            raspberry = raspberryList[this.value]
+            changeNameStatus(raspberry.getName())
+            changeTemperatureStatus(raspberry.getTemperature())
+            changeVideoStatus(raspberry.getVideo())
+            changeLastUpdate(raspberry.getLastUpdate())
             $("#statusTable").show(1000)
-            console.log(this.value)
-            console.log(API_HOST)
         }
+        
         $("#selectRaspberryPiStatus").on("change", OnChangeRBP)
+
+
     </script>
     <script>
         //Configuration

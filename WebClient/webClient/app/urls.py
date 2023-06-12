@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.urls import path
 from app import views
-from app.views import minha_pagina
+from app.views import minha_pagina, new_minha_pagina
 
 urlpatterns = [
     # ... outras URLs ...
     path('', minha_pagina, name='minha_pagina'),
+    path('new', new_minha_pagina, name='new_minha_pagina'),
 ]

@@ -8,14 +8,14 @@ services:
         - "2224:5000"
     depends_on:
         - "mosquitto-mqtt"
-  #sftp:
-    #build: ./sftp/
-    #volumes:
-    #    - ./videos:/home/ORV/videos
-    #ports:
-   #     - "2223:22"
-    #command:
-     #   - ORV:password:1001
+  sftp:
+    build: ./sftp/
+    volumes:
+        - ./videos:/home/ORV/videos
+    ports:
+        - "2223:22"
+    command:
+        - ORV:password:1001
   mosquitto-mqtt:
     image: eclipse-mosquitto:latest 
     volumes:

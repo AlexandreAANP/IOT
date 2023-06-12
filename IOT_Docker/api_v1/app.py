@@ -11,12 +11,14 @@ from mqttController import MQTTClient
 dev = {
     "hostname" : "localhost",
     "port" : 2222,
+    "wbport" : 2225,
     "ALLOWED_EXTENSIONS" : ['mp4','jpg','png'],
     "VIDEOS_PATH" : "../videos"
 }
 prod = {
     "hostname" : "iot_docker-mosquitto-mqtt-1",
     "port" : 1883,
+    "wbport" : 9006,
     "ALLOWED_EXTENSIONS" : ['mp4'],
     "VIDEOS_PATH" : "../videos"
 }
@@ -86,12 +88,19 @@ def getVideoByRaspberryPi(raspberrypi):
     print(MQTTClient.getMQTTClient().getLastMsgByTopic(raspberrypi))
     return jsonify(MQTTClient.getMQTTClient().getLastMsgByTopic(raspberrypi))
 
-@app.route('/getMQHost', methods=["GET"])
-def getMQHost():
-    return jsonify({
-        "MQ_HOST" : dev["hostname"],
-        "MQ_PORT" : dev["port"]
-    })
+@app.route('/getMQHost/<string:protocol>', methods=["GET"])
+def getMQHost(protocol):
+    if(protocol == "mqtt"):
+        return jsonify({
+            "MQ_HOST" : dev["hostname"],
+            "MQ_PORT" : dev["port"]
+        })
+    if(protocol == "wb"):
+        return jsonify({
+            "MQ_HOST" : dev["hostname"],
+            "MQ_PORT" : dev["wbport"]
+        })
+    return "protocol not found", 404
  
 # main driver function
 if __name__ == '__main__':

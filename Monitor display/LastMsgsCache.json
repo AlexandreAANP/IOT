@@ -1,0 +1,16 @@
+{
+    "raspberrypi1": {
+        "temperature": "27.0",
+        "condition": "Sunny",
+        "location": "Faro",
+        "humidity": "54",
+        "wind_kph": "11.2",
+        "video": "test2.mp4",
+        "lastUpdate": "2023-06-16 12:52:52.248752"
+    },
+    "raspberrypi2": {
+        "action": "setVideo",
+        "id": "api",
+        "video": "ok.tt"
+    }
+}
